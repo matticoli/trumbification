@@ -1,0 +1,6 @@
+venv/
+.env
+env.bat
+*.db
+.vscode/
+**/__pycache__/**
