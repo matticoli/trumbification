@@ -15,3 +15,4 @@ services:
       - BOTOWNER_ALERT_ENABLED=""
     volumes:
       - /datastorage/trumbification:/usr/src/app/data
+    restart: always
