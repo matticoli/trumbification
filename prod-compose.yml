@@ -3,7 +3,16 @@ version: '3'
 services:
   trumbification:
     image: ghcr.io/matticoli/trumbification:main
-    env_file: .env
+    environment:
+      - MAIL_API_KEY=$MAIL_API_KEY
+      - MAIL_SENDER=$MAIL_SENDER
+      - MAIL_REPLYTO=$MAIL_REPLYTO
+      - BOT_TOKEN=$BOT_TOKEN
+      - HASH_SECRET=$HASH_SECRET
+      - BOTOWNER_GUILD=$BOTOWNER_GUILD
+      - BOTOWNER_ALERT_CHANNEL=$BOTOWNER_ALERT_CHANNEL
+      - BOTOWNER_MENTION=$BOTOWNER_MENTION
+      - BOTOWNER_ALERT_ENABLED=$BOTOWNER_ALERT_ENABLED
     volumes:
       - /datastorage/trumbification:/usr/src/app/data
     restart: always
