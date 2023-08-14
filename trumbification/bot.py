@@ -121,7 +121,9 @@ def check_is_wpi_employee(email: str):
 async def alert_critical_error(*args, **kwargs):
     log.critical(*args, **kwargs)
     if BOTOWNER_ALERT_ENABLED:
-        await get_guild_channel(bot.get_guild(BOTOWNER_GUILD), BOTOWNER_ALERT_CHANNEL).send(
+        await get_guild_channel(
+            bot.get_guild(BOTOWNER_GUILD), BOTOWNER_ALERT_CHANNEL
+        ).send(
             f"**<@{BOTOWNER_MENTION}> Critical error logged by trumbification:**\n"
             + str.format(*args),
             allowed_mentions=discord.AllowedMentions.all(),
@@ -189,7 +191,9 @@ async def assign_roles(interaction: discord.Interaction, role: str, email: str =
     gld = interaction.guild
     guild_roles = config.verify_roles[gld.id] if gld.id in config.verify_roles else {}
     try:
-        rm_roles = [r for r in usr.roles if r.id in guild_roles.values() or r.name in user_roles]
+        rm_roles = [
+            r for r in usr.roles if r.id in guild_roles.values() or r.name in user_roles
+        ]
         log.info(
             "Attempting to remove roles %s for %s (%s) in %s (%s)",
             str(rm_roles),
@@ -262,7 +266,9 @@ async def assign_roles(interaction: discord.Interaction, role: str, email: str =
 async def on_ready():
     log.info("Ready")
     bot.add_view(RoleSelectView(timeout=None))
-    bot.add_view(CodePromptView("null@example.com", "Guest", showHelp=True, timeout=None))
+    bot.add_view(
+        CodePromptView("null@example.com", "Guest", showHelp=True, timeout=None)
+    )
     await bot.change_presence(
         status=discord.Status.online,
         activity=discord.Game("Contact @matticoli for assistance"),
@@ -431,7 +437,9 @@ class CodePromptView(discord.ui.View):
     Enter code view
     """
 
-    def __init__(self, email: str, role: str, showHelp: bool = False, *args, **kwargs) -> None:
+    def __init__(
+        self, email: str, role: str, showHelp: bool = False, *args, **kwargs
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.email = email
         self.role = role
@@ -447,13 +455,15 @@ class CodePromptView(discord.ui.View):
             )
             self.add_item(btn)
 
-
     @discord.ui.button(
         label="Enter Code", style=discord.ButtonStyle.blurple, custom_id="code_button"
     )
     async def button_callback(self, button, interaction: discord.Interaction):
         if self.email == "null@example.com":
-            await interaction.response.send_message("This verification code has expired. Please run `/verify` to try again", ephemeral=True)
+            await interaction.response.send_message(
+                "This verification code has expired. Please run `/verify` to try again",
+                ephemeral=True,
+            )
             return
         modal = CodeModal(
             self.email, self.role, title=f"Email Verification ({self.email})"
@@ -487,7 +497,11 @@ class CodeModal(discord.ui.Modal):
             await interaction.response.send_message(
                 "That code does not match. Please try again or contact an admin for assistance",
                 ephemeral=True,
-                view=CodePromptView(self.email, self.role, showHelp=interaction.guild.id in config.mod_roles)
+                view=CodePromptView(
+                    self.email,
+                    self.role,
+                    showHelp=interaction.guild.id in config.mod_roles,
+                ),
             )
 
 
@@ -649,6 +663,11 @@ async def view_verified_config(ctx: discord.ApplicationContext):
                 for r in user_roles
             ]
         )
+    await ctx.respond(
+        f"**Channel**: {chan}\n**Mod Role**: {mod}\n**Verified Roles**:\n{roles}",
+        ephemeral=True,
+    )
+
 
 @bot.slash_command(
     name="audit_unverified_members",
@@ -657,7 +676,9 @@ async def view_verified_config(ctx: discord.ApplicationContext):
     default_member_permissions=discord.Permissions(administrator=True),
 )
 @has_permissions(administrator=True)
-async def audit_unverified_members(ctx: discord.ApplicationContext, post_in_channel: bool = False):
+async def audit_unverified_members(
+    ctx: discord.ApplicationContext, post_in_channel: bool = False
+):
     log.info(
         "User %s (%s) requesting to audit unverified members %s (%s)",
         ctx.author.name,
@@ -667,7 +688,11 @@ async def audit_unverified_members(ctx: discord.ApplicationContext, post_in_chan
     )
     unverified_users = []
     verified_users = []
-    configured_roles = config.verify_roles[ctx.guild.id].values() if ctx.guild.id in config.verify_roles else []
+    configured_roles = (
+        config.verify_roles[ctx.guild.id].values()
+        if ctx.guild.id in config.verify_roles
+        else []
+    )
     for u in ctx.guild.members:
         if not u.bot:
             verified = False
@@ -681,4 +706,7 @@ async def audit_unverified_members(ctx: discord.ApplicationContext, post_in_chan
                 uroles = ", ".join([f"`{r.name}`" for r in u.roles[1:]])
                 unverified_users.append(f"<@{u.id}>\n\t{uroles}")
     report = "\n".join(unverified_users)
-    await ctx.respond(f"Found {len(unverified_users)} verified and {len(verified_users)} unverified users\n\n**Unverified Users**:\n{report}", ephemeral=not post_in_channel)
+    await ctx.respond(
+        f"Found {len(unverified_users)} verified and {len(verified_users)} unverified users\n\n**Unverified Users**:\n{report}",
+        ephemeral=not post_in_channel,
+    )
