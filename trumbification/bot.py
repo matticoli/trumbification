@@ -121,7 +121,7 @@ def check_is_wpi_employee(email: str):
 async def alert_critical_error(*args, **kwargs):
     log.critical(*args, **kwargs)
     if BOTOWNER_ALERT_ENABLED:
-        await get_guild_channel(BOTOWNER_GUILD, BOTOWNER_ALERT_CHANNEL).send(
+        await get_guild_channel(bot.get_guild(BOTOWNER_GUILD), BOTOWNER_ALERT_CHANNEL).send(
             f"**<@{BOTOWNER_MENTION}> Critical error logged by trumbification:**\n"
             + str.format(*args),
             allowed_mentions=discord.AllowedMentions.all(),
