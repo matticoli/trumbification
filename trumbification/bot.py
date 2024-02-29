@@ -113,8 +113,8 @@ def get_guild_channel(guild: discord.Guild, channel: int | str):
 
 def check_is_wpi_employee(email: str):
     user = email.lower().split("@")[0]
-    staff_req = requests.get(f"https://wpi.edu/people/staff/{user}")
-    fac_req = requests.get(f"https://wpi.edu/people/faculty/{user}")
+    staff_req = requests.get(f"https://wpi.edu/people/staff/{user}", verify=False)
+    fac_req = requests.get(f"https://wpi.edu/people/faculty/{user}", verify=False)
     return staff_req.status_code not in [301, 302, 404] or fac_req.status_code not in [301, 302, 404]
 
 
