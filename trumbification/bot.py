@@ -115,7 +115,7 @@ def check_is_wpi_employee(email: str):
     user = email.lower().split("@")[0]
     staff_req = requests.get(f"https://wpi.edu/people/staff/{user}")
     fac_req = requests.get(f"https://wpi.edu/people/faculty/{user}")
-    return staff_req.status_code != 404 or fac_req.status_code != 404
+    return staff_req.status_code not in [301, 302, 404] or fac_req.status_code not in [301, 302, 404]
 
 
 async def alert_critical_error(*args, **kwargs):
