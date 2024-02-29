@@ -113,19 +113,19 @@ def get_guild_channel(guild: discord.Guild, channel: int | str):
 
 def check_is_wpi_employee(email: str):
     user = email.lower().split("@")[0]
-    staff_req = requests.get(f"https://wpi.edu/people/staff/{user}", verify=False)
-    fac_req = requests.get(f"https://wpi.edu/people/faculty/{user}", verify=False)
+    staff_req = requests.get(f"https://www.wpi.edu/people/staff/{user}", allow_redirects=False)
+    fac_req = requests.get(f"https://www.wpi.edu/people/faculty/{user}", allow_redirects=False)
     return staff_req.status_code not in [301, 302, 404] or fac_req.status_code not in [301, 302, 404]
 
 
-async def alert_critical_error(*args, **kwargs):
-    log.critical(*args, **kwargs)
+async def alert_critical_error(fstring: str, *args, **kwargs):
+    log.critical(fstring, *args, **kwargs)
     if BOTOWNER_ALERT_ENABLED:
         await get_guild_channel(
             bot.get_guild(BOTOWNER_GUILD), BOTOWNER_ALERT_CHANNEL
         ).send(
             f"**<@{BOTOWNER_MENTION}> Critical error logged by trumbification:**\n"
-            + str.format(*args, **kwargs),
+            + fstring % args,
             allowed_mentions=discord.AllowedMentions.all(),
         )
 
