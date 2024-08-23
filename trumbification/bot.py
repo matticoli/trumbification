@@ -117,7 +117,7 @@ def check_is_wpi_employee(email: str):
     fac_req = requests.get(f"https://www.wpi.edu/people/faculty/{user}", allow_redirects=False)
     redirected_home = bool(fac_req.headers.get("Location") and staff_req.headers.get("Location"))
     log.info("fac_req=%r staff_req=%r redirected_home=%r", fac_req, staff_req, redirected_home)
-    return (staff_req.status_code not in [301, 302, 403, 404] or fac_req.status_code not in [301, 302, 403, 404] or not redirected_home)
+    return (staff_req.status_code not in [403, 404] or fac_req.status_code not in [403, 404])
 
 
 async def alert_critical_error(fstring: str, *args, **kwargs):
